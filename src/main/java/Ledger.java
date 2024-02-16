@@ -8,7 +8,7 @@ public class Ledger {
 
         while (true) {
             printMenu();
-            System.out.println("Selection: ");
+            System.out.print("Selection: ");
             String input = scanner.nextLine();
             System.out.println();
 
@@ -21,7 +21,7 @@ public class Ledger {
             } else if (input.equals("3")) {
                 //method call here
             } else if (input.equals("4")) {
-                //method call here
+                Customers.createCust(scanner);
             } else if (input.equals("5")) {
                 //method call here
             } else if (input.equals("6")) {
@@ -30,8 +30,8 @@ public class Ledger {
         }
     }
 
-    private static void printMenu(){
-        System.out.println("Select from the following:");
+    public static void printMenu(){
+        System.out.println("\nSelect from the following:");
         System.out.println("1. Generate a Statement");
         System.out.println("2. Generate Accounting Reports");
         System.out.println("3. Simulate a Transaction for Account");
