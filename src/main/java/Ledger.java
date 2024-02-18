@@ -19,13 +19,13 @@ public class Ledger {
             } else if (input.equals("2")) {
                 //method call here
             } else if (input.equals("3")) {
-                //method call here
+                Transactions.simulate();
             } else if (input.equals("4")) {
                 Customers.createCust(scanner);
             } else if (input.equals("5")) {
-                //method call here
+                Accounts.opts(scanner);
             } else if (input.equals("6")) {
-                //method call here
+                Transactions.opts(scanner);
             }
         }
     }

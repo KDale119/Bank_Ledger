@@ -28,7 +28,7 @@ public class Customers {
         String currDate = LocalDateTime.now().toString();
         String url = "jdbc:sqlite:C:/Users/bta96367/QTR2/bank_ledger_project/BankingLedger.db";
 
-        Connection connect;
+        Connection connect = null;
             try {
                 connect = DriverManager.getConnection(url);
                 PreparedStatement statement = connect.prepareStatement(
@@ -49,7 +49,13 @@ public class Customers {
                 e.printStackTrace();
             }
             finally {
-                //close here
+                if (connect != null) {
+                    try {
+                        connect.close();
+                    } catch (SQLException e) {
+                        System.out.println("error");
+                    }
+                }
             }
         System.out.println("\nCustomer Created with ID " + custID);
     }
