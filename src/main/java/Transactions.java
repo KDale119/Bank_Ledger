@@ -117,60 +117,71 @@ public class Transactions {
         System.out.print("Please Enter Customer Account Number: ");
         String accNum = scanner.nextLine();
 
+
         //           SQL CONNECTION
         String url = "jdbc:sqlite:C:/Users/bta96367/QTR2/bank_ledger_project/BankingLedger.db";
         Connection connect = null;
+        String custID = null;
+        try {
+            connect = DriverManager.getConnection(url);
+            PreparedStatement statement = connect.prepareStatement("select CustomerID from Account where AccountNumber = (?)");
+            statement.setString(1, accNum);
+            ResultSet rs = statement.executeQuery();
+            custID = rs.getString("ID");
+        } catch (SQLException e) {
+            System.out.println("cust id error");
+        }
 
         //           API CONNECTION
         HttpClient client = HttpClient.newHttpClient();
         HttpRequest request = HttpRequest.newBuilder(
-                URI.create("http://mcc-code-school-transaction-simulator.us-east-2.elasticbeanstalk.com/transaction/test"))
+                        URI.create("http://mcc-code-school-transaction-simulator.us-east-2.elasticbeanstalk.com/transaction/" + custID))
                 .build();
         HttpResponse<String> response = null;
 
 
+        try {
+            //     API
+            response = client.send(request, HttpResponse.BodyHandlers.ofString());
+            Simulate simulate = new Gson().fromJson(response.body(), Simulate.class);
+
+            //    SQL
+            connect = DriverManager.getConnection(url);
+            PreparedStatement statement = connect.prepareStatement("select ID from Account where AccountNumber = (?)");
+            statement.setString(1, accNum);
+            ResultSet rs = statement.executeQuery();
+
+            String transAccID = rs.getString("ID");
+
+            String currDate = LocalDateTime.now().toString();
+            statement = connect.prepareStatement("insert into Trans (ID, AccountID, Amount, Type, MerchantName, MerchantType, TransTime) values ((?), (?), (?), (?), (?), (?), (?))");
+            statement.setString(1, simulate.getTransactionId());
+            statement.setString(2, transAccID);
+            statement.setDouble(3, simulate.getAmount());
+            statement.setString(4, simulate.getTransactionType());
+            statement.setString(5, simulate.getRecipient().getMerchantName());
+            statement.setString(6, simulate.getRecipient().getMerchantType());
+            statement.setString(7, currDate);
+
+            statement.execute();
+
+
+        } catch (IOException e) {
+            System.out.println("error");
+        } catch (InterruptedException e) {
+            System.out.println("error");
+        } catch (SQLException e) {
+            System.out.println("SQL ERROR");
+            e.printStackTrace();
+        } finally {
             try {
-                //     API
-                response = client.send(request, HttpResponse.BodyHandlers.ofString());
-                Simulate simulate = new Gson().fromJson(response.body(), Simulate.class);
-
-
-                //    SQL
-                connect = DriverManager.getConnection(url);
-                PreparedStatement statement = connect.prepareStatement("select ID from Account where AccountNumber = (?)");
-                statement.setString(1, accNum);
-                ResultSet rs = statement.executeQuery();
-
-                String transAccID = rs.getString("ID");
-
-                String currDate = LocalDateTime.now().toString();
-                statement = connect.prepareStatement("insert into Trans values ID = (?), AccountID = (?), Amount = (?), Type = (?), MerchantName = (?), MerchantType = (?), TransTime = (?)");
-                statement.setString(1, simulate.getTransactionId());
-                statement.setString(2, transAccID);
-                statement.setDouble(3, simulate.getAmount());
-                statement.setString(4, simulate.getTransactionType());
-                statement.setString(5, simulate.getRecipient().getMerchantName());
-                statement.setString(6, simulate.getRecipient().getMerchantType());
-                statement.setString(7, currDate);
-
-                statement.execute();
-
-
-            } catch (IOException e) {
-                System.out.println("error");
-            } catch (InterruptedException e) {
-                System.out.println("error");
-            } catch (SQLException e) {
-                System.out.println("SQL ERROR");
-            } finally {
-                try {
-                    if (connect != null) {
-                        connect.close();
-                    }
-                } catch (SQLException e) {
-                    System.out.println("error");
-                    e.printStackTrace();
+                if (connect != null) {
+                    connect.close();
                 }
+            } catch (SQLException e) {
+                System.out.println("error");
+                e.printStackTrace();
             }
+        }
     }
 }
