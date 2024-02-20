@@ -15,7 +15,7 @@ public class Ledger {
             if (input.equalsIgnoreCase("x")) {
                 break;
             } else if (input.equals("1")) {
-                //method call here
+                Reports.statement(scanner);
             } else if (input.equals("2")) {
                 //method call here
             } else if (input.equals("3")) {

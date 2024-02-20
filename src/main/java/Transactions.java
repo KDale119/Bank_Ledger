@@ -127,9 +127,19 @@ public class Transactions {
             PreparedStatement statement = connect.prepareStatement("select CustomerID from Account where AccountNumber = (?)");
             statement.setString(1, accNum);
             ResultSet rs = statement.executeQuery();
-            custID = rs.getString("ID");
+            custID = rs.getString("CustomerID");
         } catch (SQLException e) {
             System.out.println("cust id error");
+            e.printStackTrace();
+        }
+        finally {
+            try {
+                if (connect != null) {
+                    connect.close();
+                }
+            } catch (SQLException e) {
+                System.out.println("close error");
+            }
         }
 
         //           API CONNECTION
@@ -183,5 +193,7 @@ public class Transactions {
                 e.printStackTrace();
             }
         }
+        System.out.println("Fetching Data...");
+        System.out.println("Transaction Simulated");
     }
 }
