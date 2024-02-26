@@ -9,6 +9,7 @@ import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 import java.sql.*;
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.Scanner;
 import java.util.UUID;
 
@@ -45,7 +46,9 @@ public class Transactions {
             statement.setString(1, accNum);
             ResultSet rs = statement.executeQuery();
             String transID = String.valueOf(UUID.randomUUID());
-            String currDate = LocalDateTime.now().toString();
+            String currentDate = LocalDateTime.now().format(DateTimeFormatter.ofPattern("MM/dd/yyyy-HH:mm:ss:ns"));
+            String date = currentDate.split("-")[0];
+            String time = currentDate.split("-")[1];
             String transAccID = rs.getString("ID");
 
             statement = connect.prepareStatement("insert into Trans (AccountID, ID, Type, Amount, TransTime) values ((?), (?), (?), (?), (?))");
@@ -53,7 +56,7 @@ public class Transactions {
             statement.setString(2, transID);
             statement.setString(3, "C");
             statement.setDouble(4, dep);
-            statement.setString(5, currDate);
+            statement.setString(5,date + " " + time);
 
 
             statement.execute();
@@ -89,14 +92,16 @@ public class Transactions {
             statement.setString(1, accNum);
             ResultSet rs = statement.executeQuery();
             String transID = String.valueOf(UUID.randomUUID());
-            String currDate = LocalDateTime.now().toString();
+            String currentDate = LocalDateTime.now().format(DateTimeFormatter.ofPattern("MM/dd/yyyy-HH:mm:ss:ns"));
+            String date = currentDate.split("-")[0];
+            String time = currentDate.split("-")[1];
             String transAccID = rs.getString("ID");
             statement = connect.prepareStatement("insert into Trans (AccountID, ID, Type, Amount, TransTime) values ((?), (?), (?), (?), (?))");
             statement.setString(1, transAccID);
             statement.setString(2, transID);
             statement.setString(3, "D");
             statement.setDouble(4, withdrawal);
-            statement.setString(5, currDate);
+            statement.setString(5,date + " " + time);
 
             statement.execute();
 
@@ -163,7 +168,9 @@ public class Transactions {
 
             String transAccID = rs.getString("ID");
 
-            String currDate = LocalDateTime.now().toString();
+            String currentDate = LocalDateTime.now().format(DateTimeFormatter.ofPattern("MM/dd/yyyy-HH:mm:ss:ns"));
+            String date = currentDate.split("-")[0];
+            String time = currentDate.split("-")[1];
             statement = connect.prepareStatement("insert into Trans (ID, AccountID, Amount, Type, MerchantName, MerchantType, TransTime) values ((?), (?), (?), (?), (?), (?), (?))");
             statement.setString(1, simulate.getTransactionId());
             statement.setString(2, transAccID);
@@ -171,7 +178,7 @@ public class Transactions {
             statement.setString(4, simulate.getTransactionType());
             statement.setString(5, simulate.getRecipient().getMerchantName());
             statement.setString(6, simulate.getRecipient().getMerchantType());
-            statement.setString(7, currDate);
+            statement.setString(7, date + " " + time);
 
             statement.execute();
 

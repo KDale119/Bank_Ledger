@@ -1,6 +1,12 @@
 import java.io.*;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.sql.*;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.Objects;
 import java.util.Scanner;
 
@@ -12,12 +18,17 @@ public class Reports {
     public static void statement(Scanner scanner) {
         System.out.print("Please enter a Valid File Path to Create the File: ");
         String filePath = scanner.nextLine();
-
+        if (filePath.isEmpty() || !Files.exists(Paths.get(filePath))) {
+            System.out.print("Invalid Directory, Try Again: ");
+            filePath = scanner.nextLine();
+        }
         System.out.print("\nPlease Enter Customer Name: ");
         String custName = scanner.nextLine();
         String custNameTrim = custName.replaceAll("\\s", "");
 
-        String currDate = LocalDateTime.now().toString();
+        String currentDate = LocalDateTime.now().format(DateTimeFormatter.ofPattern("MM/dd/yyyy"));
+
+
 
         //API CONNECTION
         String url = "jdbc:sqlite:C:/Users/bta96367/QTR2/bank_ledger_project/BankingLedger.db";
@@ -32,7 +43,7 @@ public class Reports {
             ResultSet rs = custStatement.executeQuery();
             String custID = rs.getString("ID");
 
-
+            // for loops for each acc here
             // GETTING ACCOUNTID FROM CustomerID
             PreparedStatement accountID = connect.prepareStatement("select ID, Name, Balance from Account where CustomerID = (?)");
             accountID.setString(1, custID);
@@ -54,7 +65,7 @@ public class Reports {
             writer.write("MCC Code School Bank Statement\n");
 
             writer.write("\nStatement for " + custName + "\n");
-            writer.write("Statement Date: " + currDate + "\n");
+            writer.write("Statement Date: " + currentDate + "\n");
 
             //Current total balance here
 
@@ -62,12 +73,13 @@ public class Reports {
             writer.write("Transactions:\n");
 
             while (transrs.next()) {
-                String time = transrs.getString("TransTime");
+                String dateAndTime = transrs.getString("TransTime");
+                String date = dateAndTime.split(" ")[0];
                 String type = transrs.getString("Type");
                 String amount = transrs.getString("Amount");
                 String merchantName = transrs.getString("MerchantName");
                 if (transrs.getString("MerchantName") != null) {
-                    writer.write(time + " ");
+                    writer.write(date + " ");
                     writer.write(merchantName + " ");
                     if (type.equalsIgnoreCase("debit")) {
                         writer.write("-$");
@@ -77,11 +89,11 @@ public class Reports {
                     writer.write(amount + "\n");
                 } else {
                     if (type.equals("C")) {
-                        writer.write(time + " ");
+                        writer.write(date + " ");
                         writer.write("Deposit ");
                         writer.write("+$" + amount + "\n");
                     } else {
-                        writer.write(time + " ");
+                        writer.write(date + " ");
                         writer.write("Withdrawl ");
                         writer.write("-$" + amount + "\n");
                     }
@@ -107,5 +119,6 @@ public class Reports {
                 System.out.println("error 4");
             }
         }
+        System.out.println("\nGenerated Statement for " + custName);
     }
 }
