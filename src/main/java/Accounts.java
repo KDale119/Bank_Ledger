@@ -10,10 +10,10 @@ public class Accounts {
     public static void opts(Scanner scanner) {
         System.out.print("\nWould you like to:\nC - Create an account\nU - Update an account\nD - Delete an account \n\nSelection: ");
         String answer = scanner.nextLine();
-//        while (!answer.equalsIgnoreCase("c") || !answer.equalsIgnoreCase("u") || !answer.equalsIgnoreCase("d")) {
+//        if (!answer.equalsIgnoreCase("c") || !answer.equalsIgnoreCase("u") || !answer.equalsIgnoreCase("d")) {
 //            System.out.println("Invalid Selection, going back to main menu.");
 //            Ledger.printMenu();
-//        }
+//            break;
         if (answer.equalsIgnoreCase("c")) {
             createAccount(scanner);
         } else if (answer.equalsIgnoreCase("u")) {
@@ -82,14 +82,14 @@ public class Accounts {
             statement.setString(2, accNum);
             statement.execute();
         } catch (SQLException e) {
-            System.out.println("error");
+            System.out.println("SQL error");
         } finally {
             try {
                 if (connect != null) {
                     connect.close();
                 }
             } catch (SQLException e) {
-                System.out.println("error");
+                System.out.println("Close error");
             }
         }
     }
@@ -100,6 +100,7 @@ public class Accounts {
         String url = "jdbc:sqlite:C:/Users/bta96367/QTR2/bank_ledger_project/BankingLedger.db";
         Connection connect = null;
         try {
+            // DELETING FROM ACCOUNT TABLE
             connect = DriverManager.getConnection(url);
             PreparedStatement statement = connect.prepareStatement("select ID from Account where AccountNumber = (?)");
             statement.setString(1, accNum);
@@ -111,19 +112,20 @@ public class Accounts {
             statement.setString(1, accNum);
             statement.execute();
 
+            // DELETING FROM TRANS TABLE
             statement = connect.prepareStatement("delete from Trans where AccountID = (?)");
             statement.setString(1, transAccID);
             statement.execute();
 
         } catch (SQLException e) {
-            System.out.println("error");
+            System.out.println("SQL error");
         } finally {
             try {
                 if (connect != null) {
                     connect.close();
                 }
             } catch (SQLException e) {
-                System.out.println("error");
+                System.out.println("Close error");
             }
         }
         System.out.println("Account Closed");

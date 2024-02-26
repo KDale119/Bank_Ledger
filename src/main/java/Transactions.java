@@ -16,7 +16,7 @@ import java.util.UUID;
 public class Transactions {
     public static void opts(Scanner scanner) {
         System.out.print("\nD - Deposit Funds\nW - Withdrawal Fund\n");
-        System.out.print("Selection: ");
+        System.out.print("\nSelection: ");
         String answer = scanner.nextLine();
         if (answer.equalsIgnoreCase("d")) {
             deposit(scanner);
@@ -71,6 +71,7 @@ public class Transactions {
                 System.out.println("error");
             }
         }
+        System.out.println("\nFunds Deposited");
     }
     //                         WITHDRAWALS
     public static void withdrawal(Scanner scanner) {
@@ -116,7 +117,7 @@ public class Transactions {
                 System.out.println("error");
             }
         }
-        System.out.println("\n");
+        System.out.println("\nFunds Withdrawn.. Give that Customer that $$$");
     }
     public static void simulate(Scanner scanner) {
         System.out.print("Please Enter Customer Account Number: ");
@@ -179,6 +180,7 @@ public class Transactions {
             statement.setString(5, simulate.getRecipient().getMerchantName());
             statement.setString(6, simulate.getRecipient().getMerchantType());
             statement.setString(7, date + " " + time);
+
 
             statement.execute();
 

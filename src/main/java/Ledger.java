@@ -13,11 +13,12 @@ public class Ledger {
             System.out.println();
 
             if (input.equalsIgnoreCase("x")) {
+                System.out.println("Goodbye!");
                 break;
             } else if (input.equals("1")) {
                 Reports.statement(scanner);
             } else if (input.equals("2")) {
-                //method call here
+                Reports.accountingReport(scanner);
             } else if (input.equals("3")) {
                 Transactions.simulate(scanner);
             } else if (input.equals("4")) {
@@ -29,7 +30,6 @@ public class Ledger {
             }
         }
     }
-
     public static void printMenu(){
         System.out.println("\nSelect from the following:");
         System.out.println("1. Generate a Statement");

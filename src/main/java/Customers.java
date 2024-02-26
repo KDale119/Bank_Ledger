@@ -5,15 +5,12 @@ import java.util.Scanner;
 import java.util.UUID;
 
 public class Customers {
-    Scanner scanner= new Scanner(System.in);
-
     public static void createCust(Scanner scanner) {
         System.out.print("Please Enter Customer Name: ");
         String custID = String.valueOf(UUID.randomUUID());
         String custName = scanner.nextLine();
         System.out.print("Please Enter Customer DOB: ");
-        int dob = scanner.nextInt();
-        scanner.nextLine();
+        String dob = scanner.nextLine();
         System.out.print("Please Enter Customer Phone Number: ");
         String phoneNum = scanner.nextLine();
         System.out.print("Please Enter Customer Address: ");
@@ -35,25 +32,23 @@ public class Customers {
                 "insert into Customer (ID, Name, DOB, PhoneNumber, StreetAddress, City, State, ZipCode, CreatedDate) values ((?),(?),(?), (?), (?), (?), (?), (?), (?));");
                 statement.setString(1, custID);
                 statement.setString(2, custName);
-                statement.setInt(3, dob);
+                statement.setString(3, dob);
                 statement.setString(4, phoneNum);
                 statement.setString(5, custAddress);
                 statement.setString(6, custCity);
                 statement.setString(7, custState);
                 statement.setInt(8, zipCode);
                 statement.setString(9, currDate);
-
                 statement.execute();
             } catch (SQLException e) {
-                System.out.println("ERROR");
-                e.printStackTrace();
+                System.out.println("SQL error");
             }
             finally {
                 if (connect != null) {
                     try {
                         connect.close();
                     } catch (SQLException e) {
-                        System.out.println("error");
+                        System.out.println("close error");
                     }
                 }
             }
