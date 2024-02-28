@@ -15,13 +15,15 @@ import java.util.UUID;
 
 public class Transactions {
     public static void opts(Scanner scanner) {
-        System.out.print("\nD - Deposit Funds\nW - Withdrawal Fund\n");
+        System.out.print("D - Deposit Funds\nW - Withdrawal Fund\n");
         System.out.print("\nSelection: ");
         String answer = scanner.nextLine();
         if (answer.equalsIgnoreCase("d")) {
             deposit(scanner);
         } else if (answer.equalsIgnoreCase("w")) {
             withdrawal(scanner);
+        } else {
+            System.out.println("\nInvalid Selection, going back to main menu");
         }
     }
 
@@ -180,10 +182,19 @@ public class Transactions {
             statement.setString(5, simulate.getRecipient().getMerchantName());
             statement.setString(6, simulate.getRecipient().getMerchantType());
             statement.setString(7, date + " " + time);
-
-
             statement.execute();
 
+            if (simulate.getTransactionType().equalsIgnoreCase("credit")) {
+                PreparedStatement addBalance = connect.prepareStatement("update Account set Balance =  Balance + (?) where AccountNumber = (?)");
+                addBalance.setDouble(1, simulate.getAmount());
+                addBalance.setString(2, accNum);
+                addBalance.execute();
+            } else if (simulate.getTransactionType().equalsIgnoreCase("debit")) {
+                PreparedStatement subtractBalance = connect.prepareStatement("update Account set Balance =  Balance - (?) where AccountNumber = (?)");
+                subtractBalance.setDouble(1, simulate.getAmount());
+                subtractBalance.setString(2, accNum);
+                subtractBalance.execute();
+            }
 
         } catch (IOException e) {
             System.out.println("error");

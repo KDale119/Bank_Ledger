@@ -10,16 +10,15 @@ public class Accounts {
     public static void opts(Scanner scanner) {
         System.out.print("\nWould you like to:\nC - Create an account\nU - Update an account\nD - Delete an account \n\nSelection: ");
         String answer = scanner.nextLine();
-//        if (!answer.equalsIgnoreCase("c") || !answer.equalsIgnoreCase("u") || !answer.equalsIgnoreCase("d")) {
-//            System.out.println("Invalid Selection, going back to main menu.");
-//            Ledger.printMenu();
-//            break;
+
         if (answer.equalsIgnoreCase("c")) {
             createAccount(scanner);
         } else if (answer.equalsIgnoreCase("u")) {
             updateAccount(scanner);
-        } else {
+        } else if (answer.equalsIgnoreCase("d")){
             deleteAcc(scanner);
+        } else {
+            System.out.println("Invalid Selection, going back to main menu.");
         }
     }
 
@@ -92,6 +91,7 @@ public class Accounts {
                 System.out.println("Close error");
             }
         }
+        System.out.println("\nAccount Updated");
     }
 
     public static void deleteAcc(Scanner scanner) {
